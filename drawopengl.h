@@ -13,15 +13,8 @@ private:
 
     enum myView {PERSPECTIVE,ORTHO};
     myView currentView;
-    float vertex[4][3] = {{0.27, 0.5, 0.0},
-                          {0.03, 0.35, 0.0},
-                          {0.03, 0.1, 0.0},
-                          {0.1, 0.0, 0.0}};
-    float x_0,
-            y_0,
-            z_0;
+    bool light_check[2];
 
-    int verticalLines;
     int x_angle;
     int y_angle;
     int z_angle;
@@ -31,22 +24,21 @@ private:
     float z_look;
     bool xyz_check;
 
-    int light_sample;
 public:
     DrawOpenGL(QWidget *parent = 0);
     ~DrawOpenGL();
 
-
     void setLight();
+    void offLight();
     void paintXYZ();
     void paintWalls();
-    void setVerticalLines(int value);
+    void paintBall(float x_0, float y_0, float z_0, float R);
+
     void setAngle(int x, int y, int z);
-    void setMove(float x, float y, float z);
     void setView(QString value);
     void setLook(float x, float y, float z);
     void setXyzCheck(bool flag);
-    void paintBall(float x_0, float y_0, float z_0, float R);
+    void setLightCheck(bool flag, int i);
 protected:
     void initializeGL();
     void resizeGL(int nWidth, int nHeight);
