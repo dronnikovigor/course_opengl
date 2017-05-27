@@ -6,6 +6,7 @@
 #include <gl/GLU.h>
 #include <gl/GL.h>
 #include <gl/GLAUX.h>
+#include <QMatrix4x4>
 
 class DrawOpenGL : public QOpenGLWidget
 {
@@ -17,6 +18,7 @@ private:
     const static int lightNum = 2;
     bool light_check[lightNum];
     float light_pos[lightNum][3];
+    QMatrix4x4 ShadowMatrix;
 
     int x_angle;
     int y_angle;
@@ -33,6 +35,7 @@ public:
 
     void setLight();
     void offLight();
+    void setShadow();
     void paintXYZ();
     void paintWalls();
     void paintBall(float x_0, float y_0, float z_0, float R);

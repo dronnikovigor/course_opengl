@@ -18,7 +18,7 @@ void DrawOpenGL::initializeGL()
     glClearColor(0.1,0.1,0.2,1);
 
     glEnable(GL_NORMALIZE);
-    glEnableClientState(GL_VERTEX_ARRAY);
+    //glEnableClientState(GL_VERTEX_ARRAY);
 }
 
 void DrawOpenGL::paintGL()
@@ -41,13 +41,19 @@ void DrawOpenGL::paintGL()
     glRotated(x_angle,1,0,0);
     glRotated(y_angle,0,1,0);
     glRotated(z_angle,0,0,1);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_FRONT);
 
     setLight();
     paintWalls();
     //if (xyz_check)
     //    paintXYZ();
     if (ball_check)
-        paintBall(-0.2, 0.1, -0.5, 0.1);
+        paintBall(-0.2, 0.1, -0.5, 0.15);
+    setShadow();
+
     offLight();
 
 }
@@ -60,7 +66,6 @@ void DrawOpenGL::setLight()
         if (light_check[i] == true)
         {
             glEnable(GL_LIGHTING);
-            glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
             continue;
         }
     }
@@ -109,7 +114,10 @@ void DrawOpenGL::offLight()
     }
 }
 
+void DrawOpenGL::setShadow()
+{
 
+}
 
 void DrawOpenGL::paintXYZ()
 {
@@ -126,45 +134,121 @@ void DrawOpenGL::paintXYZ()
 
 void DrawOpenGL::paintWalls()
 {
-    glColor4d(0.5,1.0,1.0,1.0);
-    glBegin(GL_QUADS);
+    glColor4d(0.88,0.87,0.88,1.0);
+    glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
+    GLfloat front_color[] = {0.88,0.87,0.88,1};
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, front_color);
+    glBegin(GL_POLYGON);
+    glNormal3f(0,0,1);
     glVertex3d(-1.0,0.0,-1.0);
     glVertex3d(-1.0,1.0,-1.0);
     glVertex3d(0.5,1.0,-1.0);
     glVertex3d(0.5,0.0,-1.0);
+    glEnd();
 
-    glVertex3d(-1.0,0.0,-1.0);
+    glBegin(GL_POLYGON);
+    glNormal3f(1,0,0);
+    glVertex3d(-1.0,0.0,0.5);
+    glVertex3d(-1.0,1.0,0.5);
     glVertex3d(-1.0,1.0,-1.0);
-    glVertex3d(-1.0,1.0,0.5);
-    glVertex3d(-1.0,0.0,0.5);
-
     glVertex3d(-1.0,0.0,-1.0);
-    glVertex3d(0.5,0.0,-1.0);
-    glVertex3d(0.5,0.0,0.5);
-    glVertex3d(-1.0,0.0,0.5);
+    glEnd();
 
-    glVertex3d(-1.0,0.0,0.5);
-    glVertex3d(-1.0,1.0,0.5);
+    glBegin(GL_POLYGON);
+    glNormal3f(0,0,1);
+    glVertex3d(0.5,0.0,-1.0);
+    glVertex3d(0.5,1.0,-1.0);
     glVertex3d(0.5,1.0,0.5);
     glVertex3d(0.5,0.0,0.5);
     glEnd();
 
+    glBegin(GL_POLYGON);
+    glNormal3f(1,0,0);
+    glVertex3d(0.5,0.0,0.5);
+    glVertex3d(0.5,1.0,0.5);
+    glVertex3d(-1.0,1.0,0.5);
+    glVertex3d(-1.0,0.0,0.5);
+    glEnd();
+
+    glDisable(GL_CULL_FACE);
+    glBegin(GL_POLYGON);
+    glNormal3f(0,1,0);
+    glVertex3d(0.5,0.0,0.5);
+    glVertex3d(-1.0,0.0,0.5);
+    glVertex3d(-1.0,0.0,-1.0);
+    glVertex3d(0.5,0.0,-1.0);
+    glEnd();
+    glEnable(GL_CULL_FACE);
+
+    glColor4d(0.0,0.0,0.0,1.0);
+    glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
+    front_color[0] =0.1;
+    front_color[1] =0.1;
+    front_color[2] =0.2;
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, front_color);
+    glBegin(GL_POLYGON);
+    glNormal3f(1,0,0);
+    glVertex3d(-1.0,0.2,0.45);
+    glVertex3d(-1.0,0.8,0.45);
+    glVertex3d(-1.0,0.8,0.05);
+    glVertex3d(-1.0,0.2,0.05);
+    glEnd();
+
+    glBegin(GL_POLYGON);
+    glNormal3f(1,0,0);
+    glVertex3d(-1.0,0.2,-0.0);
+    glVertex3d(-1.0,0.8,-0.0);
+    glVertex3d(-1.0,0.8,-0.45);
+    glVertex3d(-1.0,0.2,-0.45);
+    glEnd();
+
+    glBegin(GL_POLYGON);
+    glNormal3f(1,0,0);
+    glVertex3d(-1.0,0.2,-0.5);
+    glVertex3d(-1.0,0.8,-0.5);
+    glVertex3d(-1.0,0.8,-0.95);
+    glVertex3d(-1.0,0.2,-0.95);
+    glEnd();
+
+
 }
 
 void DrawOpenGL::paintBall(float x_0, float y_0, float z_0, float R)
-{
+{    
+    glDisable(GL_CULL_FACE);
+    glDisable(GL_DEPTH_TEST);
     glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
-    GLUquadricObj *quadObj;
-    GLfloat front_color[] = {0,1,0,1};
-    quadObj = gluNewQuadric();
+    GLfloat front_color[] = {0.72,0.81,0.80,1};
     glMaterialfv(GL_FRONT, GL_DIFFUSE, front_color);
     glPushMatrix();
+    float step = 0.05;
     glColor3d(1,0,0);
-    gluQuadricDrawStyle(quadObj, GLU_FILL);
-    glTranslated(x_0,y_0,z_0);
-    gluSphere(quadObj, R, 20, 20);
+    for (float alpha1 = -PI/2; alpha1 <= PI/2; alpha1+=step)
+        for (float alpha2 = -PI; alpha2 <= PI; alpha2+=step)
+        {
+            glBegin(GL_POLYGON);
+            glNormal3f(0,1,0);
+            float x=x_0+R*cos(alpha2)*cos(alpha1);
+            float y=y_0+R*sin(alpha2)*cos(alpha1);
+            float z=z_0+R*sin(alpha1);
+            glVertex3d(x, y, z);
+            x=x_0+R*cos(alpha2+step)*cos(alpha1);
+            y=y_0+R*sin(alpha2+step)*cos(alpha1);
+            z=z_0+R*sin(alpha1);
+            glVertex3d(x, y, z);
+            x=x_0+R*cos(alpha2+step)*cos(alpha1+step);
+            y=y_0+R*sin(alpha2+step)*cos(alpha1+step);
+            z=z_0+R*sin(alpha1+step);
+            glVertex3d(x, y, z);
+            x=x_0+R*cos(alpha2)*cos(alpha1+step);
+            y=y_0+R*sin(alpha2)*cos(alpha1+step);
+            z=z_0+R*sin(alpha1+step);
+            glVertex3d(x, y, z);
+            glEnd();
+        }
     glPopMatrix();
-    gluDeleteQuadric(quadObj);
+    glEnable(GL_CULL_FACE);
+    glEnable(GL_DEPTH_TEST);
 }
 
 void DrawOpenGL::resizeGL(int nWidth, int nHeight)
