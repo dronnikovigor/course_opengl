@@ -24,11 +24,11 @@ MainWindow::MainWindow(QWidget *parent) :
     on_x_slider_look_valueChanged(0);
 
     ui->x_light0_move->setValue(100);
-    ui->y_light0_move->setValue(180);
-    ui->z_light0_move->setValue(-10);
-    ui->x_light1_move->setValue(0);
+    ui->y_light0_move->setValue(100);
+    ui->z_light0_move->setValue(-80);
+    ui->x_light1_move->setValue(-90);
     ui->y_light1_move->setValue(50);
-    ui->z_light1_move->setValue(70);
+    ui->z_light1_move->setValue(0);
 
     on_comboBox_currentTextChanged("PERSPECTIVE");
     ui->comboBox->setCurrentIndex(1);

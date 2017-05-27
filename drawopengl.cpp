@@ -31,7 +31,7 @@ void DrawOpenGL::paintGL()
         gluPerspective (100, 1, 50, 0);
         break;
     case ORTHO:
-        glOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0);
+        glOrtho(-3.0, 3.0, -3.0, 3.0, -3.0, 3.0);
         break;
     }
     glMatrixMode(GL_MODELVIEW);
@@ -46,6 +46,18 @@ void DrawOpenGL::paintGL()
     glEnable(GL_CULL_FACE);
     glCullFace(GL_FRONT);
 
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
+    // Сглаживание точек
+    glEnable(GL_POINT_SMOOTH);
+    glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+    // Сглаживание линий
+    glEnable(GL_LINE_SMOOTH);
+    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+    // Сглаживание полигонов
+    glEnable(GL_POLYGON_SMOOTH);
+    glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
+
     setLight();
     paintWalls();
     //if (xyz_check)
@@ -56,6 +68,10 @@ void DrawOpenGL::paintGL()
 
     offLight();
 
+    glDisable(GL_BLEND);
+    glDisable(GL_POINT_SMOOTH);
+    glDisable(GL_LINE_SMOOTH);
+    glDisable(GL_POLYGON_SMOOTH);
 }
 void DrawOpenGL::setLight()
 {
@@ -134,6 +150,7 @@ void DrawOpenGL::paintXYZ()
 
 void DrawOpenGL::paintWalls()
 {
+    //wall
     glColor4d(0.88,0.87,0.88,1.0);
     glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
     GLfloat front_color[] = {0.88,0.87,0.88,1};
@@ -146,6 +163,36 @@ void DrawOpenGL::paintWalls()
     glVertex3d(0.5,0.0,-1.0);
     glEnd();
 
+    //plinth
+    glColor4d(0.80,0.79,0.80,1.0);
+    glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
+    front_color[0] =0.75;
+    front_color[1] =0.79;
+    front_color[2] =0.90;
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, front_color);
+    glBegin(GL_POLYGON);
+    glNormal3f(0,0,1);
+    glVertex3d(-1.0,0.0,-0.99);
+    glVertex3d(-1.0,0.1,-0.99);
+    glVertex3d(0.5,0.1,-0.99);
+    glVertex3d(0.5,0.0,-0.99);
+    glEnd();
+
+    glBegin(GL_POLYGON);
+    glNormal3f(0,1,0);
+    glVertex3d(-1.0,0.1,-0.99);
+    glVertex3d(-1.0,0.1,-1.0);
+    glVertex3d(0.5,0.1,-1.0);
+    glVertex3d(0.5,0.1,-0.99);
+    glEnd();
+
+    //wall
+    glColor4d(0.88,0.87,0.88,1.0);
+    glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
+    front_color[0] =0.88;
+    front_color[1] =0.87;
+    front_color[2] =0.88;
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, front_color);
     glBegin(GL_POLYGON);
     glNormal3f(1,0,0);
     glVertex3d(-1.0,0.0,0.5);
@@ -154,32 +201,7 @@ void DrawOpenGL::paintWalls()
     glVertex3d(-1.0,0.0,-1.0);
     glEnd();
 
-    glBegin(GL_POLYGON);
-    glNormal3f(0,0,1);
-    glVertex3d(0.5,0.0,-1.0);
-    glVertex3d(0.5,1.0,-1.0);
-    glVertex3d(0.5,1.0,0.5);
-    glVertex3d(0.5,0.0,0.5);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glNormal3f(1,0,0);
-    glVertex3d(0.5,0.0,0.5);
-    glVertex3d(0.5,1.0,0.5);
-    glVertex3d(-1.0,1.0,0.5);
-    glVertex3d(-1.0,0.0,0.5);
-    glEnd();
-
-    glDisable(GL_CULL_FACE);
-    glBegin(GL_POLYGON);
-    glNormal3f(0,1,0);
-    glVertex3d(0.5,0.0,0.5);
-    glVertex3d(-1.0,0.0,0.5);
-    glVertex3d(-1.0,0.0,-1.0);
-    glVertex3d(0.5,0.0,-1.0);
-    glEnd();
-    glEnable(GL_CULL_FACE);
-
+    //windows
     glColor4d(0.0,0.0,0.0,1.0);
     glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
     front_color[0] =0.1;
@@ -210,7 +232,152 @@ void DrawOpenGL::paintWalls()
     glVertex3d(-1.0,0.2,-0.95);
     glEnd();
 
+    //over windows
+    glColor4d(0.88,0.87,0.88,1.0);
+    glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
+    front_color[0] =0.88;
+    front_color[1] =0.87;
+    front_color[2] =0.88;
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, front_color);
+    glBegin(GL_POLYGON);
+    glNormal3f(0,-1,0);
+    glVertex3d(-1.0,0.8,0.5);
+    glVertex3d(-0.8,0.8,0.5);
+    glVertex3d(-0.8,0.8,-1.0);
+    glVertex3d(-1.0,0.8,-1.0);
+    glEnd();
 
+    glBegin(GL_POLYGON);
+    glNormal3f(1,0,0);
+    glVertex3d(-0.8,0.8,0.5);
+    glVertex3d(-0.8,1.0,0.5);
+    glVertex3d(-0.8,1.0,-1.0);
+    glVertex3d(-0.8,0.8,-1.0);
+    glEnd();
+
+    //plinth
+    glColor4d(0.80,0.79,0.80,1.0);
+    glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
+    front_color[0] =0.75;
+    front_color[1] =0.79;
+    front_color[2] =0.90;
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, front_color);
+    glBegin(GL_POLYGON);
+    glNormal3f(1,0,0);
+    glVertex3d(-0.99,0.0,0.5);
+    glVertex3d(-0.99,0.1,0.5);
+    glVertex3d(-0.99,0.1,-1.0);
+    glVertex3d(-0.99,0.0,-1.0);
+    glEnd();
+
+    glBegin(GL_POLYGON);
+    glNormal3f(0,1,0);
+    glVertex3d(-0.99,0.1,0.5);
+    glVertex3d(-1.0,0.1,0.5);
+    glVertex3d(-1.0,0.1,-1.0);
+    glVertex3d(-0.99,0.1,-1.0);
+    glEnd();
+
+    /*glBegin(GL_POLYGON);
+    glNormal3f(0,1,0);
+    glVertex3d(-0.8,1.0,0.5);
+    glVertex3d(-1.0,1.0,0.5);
+    glVertex3d(-1.0,1.0,-1.0);
+    glVertex3d(-0.8,1.0,-1.0);
+    glEnd();*/
+
+    //wall
+    glColor4d(0.88,0.87,0.88,1.0);
+    glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
+    front_color[0] =0.88;
+    front_color[1] =0.87;
+    front_color[2] =0.88;
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, front_color);
+    glBegin(GL_POLYGON);
+    glNormal3f(0,0,1);
+    glVertex3d(0.5,0.0,-1.0);
+    glVertex3d(0.5,1.0,-1.0);
+    glVertex3d(0.5,1.0,0.5);
+    glVertex3d(0.5,0.0,0.5);
+    glEnd();
+
+    //plinth
+    glColor4d(0.80,0.79,0.80,1.0);
+    glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
+    front_color[0] =0.75;
+    front_color[1] =0.79;
+    front_color[2] =0.90;
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, front_color);
+    glBegin(GL_POLYGON);
+    glNormal3f(0,0,1);
+    glVertex3d(0.49,0.0,-1.0);
+    glVertex3d(0.49,0.1,-1.0);
+    glVertex3d(0.49,0.1,0.5);
+    glVertex3d(0.49,0.0,0.5);
+    glEnd();
+
+    glBegin(GL_POLYGON);
+    glNormal3f(0,1,0);
+    glVertex3d(0.49,0.1,-1.0);
+    glVertex3d(0.5,0.1,-1.0);
+    glVertex3d(0.5,0.1,0.5);
+    glVertex3d(0.49,0.1,0.5);
+    glEnd();
+
+    //wall
+    glColor4d(0.88,0.87,0.88,1.0);
+    glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
+    front_color[0] =0.88;
+    front_color[1] =0.87;
+    front_color[2] =0.88;
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, front_color);
+    glBegin(GL_POLYGON);
+    glNormal3f(1,0,0);
+    glVertex3d(0.5,0.0,0.5);
+    glVertex3d(0.5,1.0,0.5);
+    glVertex3d(-1.0,1.0,0.5);
+    glVertex3d(-1.0,0.0,0.5);
+    glEnd();
+
+    //plinth
+    glColor4d(0.80,0.79,0.80,1.0);
+    glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
+    front_color[0] =0.75;
+    front_color[1] =0.79;
+    front_color[2] =0.90;
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, front_color);
+    glBegin(GL_POLYGON);
+    glNormal3f(1,0,0);
+    glVertex3d(0.5,0.0,0.49);
+    glVertex3d(0.5,0.1,0.49);
+    glVertex3d(-1.0,0.1,0.49);
+    glVertex3d(-1.0,0.0,0.49);
+    glEnd();
+
+    glBegin(GL_POLYGON);
+    glNormal3f(0,1,0);
+    glVertex3d(0.5,0.1,0.49);
+    glVertex3d(0.5,0.1,0.5);
+    glVertex3d(-1.0,0.1,0.5);
+    glVertex3d(-1.0,0.1,0.49);
+    glEnd();
+
+    //floor
+    glColor4d(0.80,0.79,0.80,1.0);
+    glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
+    front_color[0] =0.75;
+    front_color[1] =0.79;
+    front_color[2] =0.90;
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, front_color);
+    glDisable(GL_CULL_FACE);
+    glBegin(GL_POLYGON);
+    glNormal3f(0,1,0);
+    glVertex3d(0.5,0.0,0.5);
+    glVertex3d(-1.0,0.0,0.5);
+    glVertex3d(-1.0,0.0,-1.0);
+    glVertex3d(0.5,0.0,-1.0);
+    glEnd();
+    glEnable(GL_CULL_FACE);
 }
 
 void DrawOpenGL::paintBall(float x_0, float y_0, float z_0, float R)
