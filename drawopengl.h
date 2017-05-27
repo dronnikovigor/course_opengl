@@ -5,6 +5,7 @@
 #include <QOpenGLWidget>
 #include <gl/GLU.h>
 #include <gl/GL.h>
+#include <gl/GLAUX.h>
 
 class DrawOpenGL : public QOpenGLWidget
 {
@@ -13,7 +14,9 @@ private:
 
     enum myView {PERSPECTIVE,ORTHO};
     myView currentView;
-    bool light_check[2];
+    const static int lightNum = 2;
+    bool light_check[lightNum];
+    float light_pos[lightNum][3];
 
     int x_angle;
     int y_angle;
@@ -22,7 +25,7 @@ private:
     float x_look;
     float y_look;
     float z_look;
-    bool xyz_check;
+    bool ball_check;
 
 public:
     DrawOpenGL(QWidget *parent = 0);
@@ -37,8 +40,9 @@ public:
     void setAngle(int x, int y, int z);
     void setView(QString value);
     void setLook(float x, float y, float z);
-    void setXyzCheck(bool flag);
     void setLightCheck(bool flag, int i);
+    void setBallCheck(bool flag);
+    void setLightPos(float x, float y, float z, int i);
 protected:
     void initializeGL();
     void resizeGL(int nWidth, int nHeight);

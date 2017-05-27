@@ -16,8 +16,7 @@ DrawOpenGL::~DrawOpenGL()
 void DrawOpenGL::initializeGL()
 {
     glClearColor(0.1,0.1,0.2,1);
-    glEnable(GL_LIGHTING);
-    glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
+
     glEnable(GL_NORMALIZE);
     glEnableClientState(GL_VERTEX_ARRAY);
 }
@@ -47,7 +46,8 @@ void DrawOpenGL::paintGL()
     paintWalls();
     //if (xyz_check)
     //    paintXYZ();
-    paintBall(-0.2, 0, -1, 0.1);
+    if (ball_check)
+        paintBall(-0.2, 0.1, -0.5, 0.1);
     offLight();
 
 }
@@ -55,7 +55,15 @@ void DrawOpenGL::setLight()
 {
     // свойства материала
     GLfloat material_diffuse[] = {1.0, 1.0, 1.0, 1.0};
-    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, material_diffuse);
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, material_diffuse);
+    for (int i = 0; i < 2; i++){
+        if (light_check[i] == true)
+        {
+            glEnable(GL_LIGHTING);
+            glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
+            continue;
+        }
+    }
     // установка источников света
     // точечный источник света
     // убывание интенсивности с расстоянием
@@ -64,7 +72,7 @@ void DrawOpenGL::setLight()
     if (light_check[0] == true)
     {
         GLfloat light0_diffuse[] = {0.95, 0.98, 0.84};
-        GLfloat light0_position[] = {0.0, 0.9, 0.8, 1.0};
+        GLfloat light0_position[] = {light_pos[0][0], light_pos[0][1], light_pos[0][2], 1.0};
         glEnable(GL_LIGHT0);
         glLightfv(GL_LIGHT0, GL_DIFFUSE, light0_diffuse);
         glLightfv(GL_LIGHT0, GL_POSITION, light0_position);
@@ -76,7 +84,7 @@ void DrawOpenGL::setLight()
     if (light_check[1] == true)
     {
         GLfloat light1_diffuse[] = {0.95, 0.98, 0.84};
-        GLfloat light1_position[] = {0.0, 0.9, 0.0, 1.0};
+        GLfloat light1_position[] = {light_pos[1][0], light_pos[1][1], light_pos[1][2], 1.0};
         glEnable(GL_LIGHT1);
         glLightfv(GL_LIGHT1, GL_DIFFUSE, light1_diffuse);
         glLightfv(GL_LIGHT1, GL_POSITION, light1_position);
@@ -90,10 +98,17 @@ void DrawOpenGL::setLight()
 void DrawOpenGL::offLight()
 {
     if (light_check[0] == true)
+    {
+        glDisable(GL_LIGHTING);
         glDisable(GL_LIGHT0);
+    }
     if (light_check[1] == true)
+    {
+        glDisable(GL_LIGHTING);
         glDisable(GL_LIGHT1);
+    }
 }
+
 
 
 void DrawOpenGL::paintXYZ()
@@ -138,14 +153,18 @@ void DrawOpenGL::paintWalls()
 
 void DrawOpenGL::paintBall(float x_0, float y_0, float z_0, float R)
 {
-    //glColor3d(0.5,0.5,1.0);
-    /*glBegin( GL_TRIANGLE_FAN );
-    glVertex2f( 0.0f, 0.0f ); // вершина в центре круга
-    for(int i = 0; i <= 50; i++ ) {
-        float a = (float)i / 50.0f * 3.1415f * 2.0f;
-        glVertex2f( cos( a ) * R, sin( a ) * R );
-    }
-    glEnd();*/
+    glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
+    GLUquadricObj *quadObj;
+    GLfloat front_color[] = {0,1,0,1};
+    quadObj = gluNewQuadric();
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, front_color);
+    glPushMatrix();
+    glColor3d(1,0,0);
+    gluQuadricDrawStyle(quadObj, GLU_FILL);
+    glTranslated(x_0,y_0,z_0);
+    gluSphere(quadObj, R, 20, 20);
+    glPopMatrix();
+    gluDeleteQuadric(quadObj);
 }
 
 void DrawOpenGL::resizeGL(int nWidth, int nHeight)
@@ -177,12 +196,19 @@ void DrawOpenGL::setLook(float x, float y, float z)
     z_look = z;
 }
 
-void DrawOpenGL::setXyzCheck(bool flag)
-{
-    xyz_check = flag;
-}
-
 void DrawOpenGL::setLightCheck(bool flag, int i)
 {
     light_check[i] = flag;
+}
+
+void DrawOpenGL::setBallCheck(bool flag)
+{
+    ball_check = flag;
+}
+
+void DrawOpenGL::setLightPos(float x, float y, float z, int i)
+{
+    light_pos[i][0] = x;
+    light_pos[i][1] = y;
+    light_pos[i][2] = z;
 }

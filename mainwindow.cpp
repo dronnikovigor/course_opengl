@@ -16,12 +16,19 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->light_0_check->setChecked(true);
     ui->light_1_check->setChecked(true);
+    ui->ball_check->setChecked(true);
 
     ui->x_slider_look->setValue(105);
     ui->y_slider_look->setValue(105);
     ui->z_slider_look->setValue(55);
     on_x_slider_look_valueChanged(0);
 
+    ui->x_light0_move->setValue(50);
+    ui->y_light0_move->setValue(90);
+    ui->z_light0_move->setValue(-110);
+    ui->x_light1_move->setValue(0);
+    ui->y_light1_move->setValue(90);
+    ui->z_light1_move->setValue(0);
 
     on_comboBox_currentTextChanged("PERSPECTIVE");
     ui->comboBox->setCurrentIndex(1);
@@ -99,4 +106,42 @@ void MainWindow::on_light_1_check_toggled(bool checked)
 {
     ui->OpenGLWidget->setLightCheck(checked, 1);
     ui->OpenGLWidget->update();
+}
+
+void MainWindow::on_ball_check_toggled(bool checked)
+{
+    ui->OpenGLWidget->setBallCheck(checked);
+    ui->OpenGLWidget->update();
+}
+
+void MainWindow::on_x_light0_move_valueChanged(int value)
+{
+    ui->OpenGLWidget->setLightPos(ui->x_light0_move->value()*0.01, ui->y_light0_move->value()*0.01, ui->z_light0_move->value()*0.01, 0);
+    ui->OpenGLWidget->update();
+}
+
+void MainWindow::on_y_light0_move_valueChanged(int value)
+{
+    on_x_light0_move_valueChanged(0);
+}
+
+void MainWindow::on_z_light0_move_valueChanged(int value)
+{
+    on_x_light0_move_valueChanged(0);
+}
+
+void MainWindow::on_x_light1_move_valueChanged(int value)
+{
+    ui->OpenGLWidget->setLightPos(ui->x_light1_move->value()*0.01, ui->y_light1_move->value()*0.01, ui->z_light1_move->value()*0.01, 1);
+    ui->OpenGLWidget->update();
+}
+
+void MainWindow::on_y_light1_move_valueChanged(int value)
+{
+    on_x_light1_move_valueChanged(0);
+}
+
+void MainWindow::on_z_light1_move_valueChanged(int value)
+{
+    on_x_light1_move_valueChanged(0);
 }

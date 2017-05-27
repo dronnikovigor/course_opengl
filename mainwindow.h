@@ -37,6 +37,20 @@ private slots:
 
     void on_light_1_check_toggled(bool checked);
 
+    void on_ball_check_toggled(bool checked);
+
+    void on_x_light0_move_valueChanged(int value);
+
+    void on_y_light0_move_valueChanged(int value);
+
+    void on_z_light0_move_valueChanged(int value);
+
+    void on_x_light1_move_valueChanged(int value);
+
+    void on_y_light1_move_valueChanged(int value);
+
+    void on_z_light1_move_valueChanged(int value);
+
 private:
     Ui::MainWindow *ui;
 
