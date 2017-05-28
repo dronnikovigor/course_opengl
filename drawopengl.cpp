@@ -76,6 +76,7 @@ void DrawOpenGL::paintGL()
     }
     else
         light_check[2] = false;
+    paintTrgl(-0.5, 0.2, 0.3, 0.2, 0.2);
     //setShadow();
 
     offLight();
@@ -212,6 +213,22 @@ void DrawOpenGL::paintShelf(float x_0, float y_0, float z_0, float h, float w, f
     drawPolygon(x_0-d,y_0,z_0-w, x_0-d,y_0+h-step,z_0-w, x_0-d,y_0+h-step,z_0-w+step, x_0-d,y_0,z_0-w+step, -1,0,0);
 }
 
+void DrawOpenGL::paintTrgl(float x_0, float y_0, float z_0, float w, float k)
+{
+    glColor4d(0.72,0.81,0.80,1.0);
+    glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
+    GLfloat front_color[] = {0.72,0.81,0.80,1};
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, front_color);
+
+    //inside
+    drawPolygon(x_0,y_0,z_0, x_0,y_0+k*sqrt(3)*0.5,z_0-k*0.5, x_0-w,y_0+k*sqrt(3)*0.5,z_0-k*0.5, x_0-w,y_0,z_0, 0,0,-1);
+    drawPolygon(x_0,y_0,z_0-k, x_0-w,y_0,z_0-k, x_0-w,y_0+k*sqrt(3)*0.5,z_0-k*0.5, x_0,y_0+k*sqrt(3)*0.5,z_0-k*0.5, 0,0,1);
+    drawPolygon(x_0,y_0,z_0, x_0-w,y_0,z_0, x_0-w,y_0,z_0-k, x_0,y_0,z_0-k, 0,1,0);
+    //outside
+    drawPolygon(x_0-w,y_0,z_0, x_0-w,y_0+k*sqrt(3)*0.5,z_0-k*0.5, x_0,y_0+k*sqrt(3)*0.5,z_0-k*0.5, x_0,y_0,z_0, 0,0,1);
+    drawPolygon(x_0,y_0+k*sqrt(3)*0.5,z_0-k*0.5, x_0-w,y_0+k*sqrt(3)*0.5,z_0-k*0.5, x_0-w,y_0,z_0-k, x_0,y_0,z_0-k, 0,0,-1);
+    drawPolygon(x_0,y_0,z_0-k, x_0-w,y_0,z_0-k, x_0-w,y_0,z_0, x_0,y_0,z_0, 0,-1,0);
+}
 
 void DrawOpenGL::paintWalls()
 {

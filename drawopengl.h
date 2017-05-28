@@ -40,6 +40,7 @@ public:
     void paintXYZ();
     void drawPolygon(float xA, float yA, float zA, float xB, float yB, float zB, float xC, float yC, float zC, float xD, float yD, float zD, int xN, int yN, int zN);
     void paintShelf(float x_0, float y_0, float z_0, float h, float w, float d);
+    void paintTrgl(float x_0, float y_0, float z_0, float w, float k);
     void paintWalls();
     void paintBall(float x_0, float y_0, float z_0, float R);
 
