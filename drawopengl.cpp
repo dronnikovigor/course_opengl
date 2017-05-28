@@ -64,7 +64,19 @@ void DrawOpenGL::paintGL()
     //    paintXYZ();
     if (ball_check)
         paintBall(-0.2, 0.1, -0.5, 0.15);
-    setShadow();
+    if (shelf_check)
+    {
+        light_pos[2][0] = 0.3;
+        light_pos[2][1] = 0.14;
+        light_pos[2][2] = 0.3;
+        light_check[2] = true;
+        paintShelf(0.4, 0.0, 0.4, 0.15, 0.5, 0.4);
+        paintShelf(0.4, 0.15, 0.4, 0.15, 0.4, 0.4);
+        paintShelf(0.4, 0.3, 0.4, 0.15, 0.3, 0.4);
+    }
+    else
+        light_check[2] = false;
+    //setShadow();
 
     offLight();
 
@@ -78,7 +90,7 @@ void DrawOpenGL::setLight()
     // свойства материала
     GLfloat material_diffuse[] = {1.0, 1.0, 1.0, 1.0};
     glMaterialfv(GL_FRONT, GL_DIFFUSE, material_diffuse);
-    for (int i = 0; i < 2; i++){
+    for (int i = 0; i < lightNum; i++){
         if (light_check[i] == true)
         {
             glEnable(GL_LIGHTING);
@@ -113,6 +125,19 @@ void DrawOpenGL::setLight()
         glLightf(GL_LIGHT1, GL_LINEAR_ATTENUATION, 0.2);
         glLightf(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, 0.4);
     }
+    //2
+    if (light_check[2] == true)
+    {
+        GLfloat light2_diffuse[] = {0.95, 0.98, 0.84};
+        GLfloat light2_position[] = {light_pos[2][0], light_pos[2][1], light_pos[2][2], 1.0};
+        glEnable(GL_LIGHT2);
+        glLightfv(GL_LIGHT2, GL_DIFFUSE, light2_diffuse);
+        glLightfv(GL_LIGHT2, GL_POSITION, light2_position);
+        glLightf(GL_LIGHT2, GL_CONSTANT_ATTENUATION, 0.0);
+        glLightf(GL_LIGHT2, GL_LINEAR_ATTENUATION, 0.6);
+        glLightf(GL_LIGHT2, GL_QUADRATIC_ATTENUATION, 0.6);
+    }
+
 
 }
 
@@ -128,6 +153,8 @@ void DrawOpenGL::offLight()
         glDisable(GL_LIGHTING);
         glDisable(GL_LIGHT1);
     }
+    glDisable(GL_LIGHTING);
+    glDisable(GL_LIGHT2);
 }
 
 void DrawOpenGL::setShadow()
@@ -148,6 +175,44 @@ void DrawOpenGL::paintXYZ()
     glEnd();
 }
 
+void DrawOpenGL::drawPolygon(float xA, float yA, float zA, float xB, float yB, float zB, float xC, float yC, float zC, float xD, float yD, float zD, int xN, int yN, int zN)
+{
+    glBegin(GL_POLYGON);
+    glNormal3f(xN, yN, zN);
+    glVertex3d(xA, yA, zA);
+    glVertex3d(xB, yB, zB);
+    glVertex3d(xC, yC, zC);
+    glVertex3d(xD, yD, zD);
+    glEnd();
+}
+
+void DrawOpenGL::paintShelf(float x_0, float y_0, float z_0, float h, float w, float d)
+{
+    float step = 0.02;
+    glColor4d(0.72,0.81,0.80,1.0);
+    glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
+    GLfloat front_color[] = {0.72,0.81,0.80,1};
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, front_color);
+
+    //inside
+    drawPolygon(x_0-d,y_0+h-step,z_0-step, x_0,y_0+h-step,z_0-step, x_0,y_0+h-step,z_0-w+step, x_0-d,y_0+h-step,z_0-w+step, 0,-1,0);
+    drawPolygon(x_0-d,y_0,z_0-w+step, x_0-d,y_0+h-step,z_0-w+step, x_0,y_0+h-step,z_0-w+step, x_0,y_0,z_0-w+step, 0,0,1);
+    drawPolygon(x_0,y_0,z_0-step, x_0,y_0+h-step,z_0-step, x_0-d,y_0+h-step,z_0-step, x_0-d,y_0,z_0-step, 0,0,-1);
+    //outside
+    drawPolygon(x_0,y_0+h,z_0, x_0-d,y_0+h,z_0, x_0-d,y_0+h,z_0-w, x_0,y_0+h,z_0-w, 0,1,0);
+    drawPolygon(x_0,y_0,z_0-w, x_0,y_0+h,z_0-w, x_0-d,y_0+h,z_0-w, x_0-d,y_0,z_0-w, 0,0,-1);
+    drawPolygon(x_0-d,y_0,z_0, x_0-d,y_0+h,z_0, x_0,y_0+h,z_0, x_0,y_0,z_0, 0,0,1);
+
+    drawPolygon(x_0,y_0+h-step,z_0, x_0,y_0+h,z_0, x_0,y_0+h,z_0-w, x_0,y_0+h-step,z_0-w, 1,0,0);
+    drawPolygon(x_0,y_0,z_0, x_0,y_0+h-step,z_0, x_0,y_0+h-step,z_0-step, x_0,y_0,z_0-step, 1,0,0);
+    drawPolygon(x_0,y_0,z_0-w+step, x_0,y_0+h-step,z_0-w+step, x_0,y_0+h-step,z_0-w, x_0,y_0,z_0-w, 1,0,0);
+
+    drawPolygon(x_0-d,y_0+h-step,z_0-w, x_0-d,y_0+h,z_0-w, x_0-d,y_0+h,z_0,  x_0-d,y_0+h-step,z_0, -1,0,0);
+    drawPolygon(x_0-d,y_0,z_0-step, x_0-d,y_0+h-step,z_0-step, x_0-d,y_0+h-step,z_0, x_0-d,y_0,z_0, -1,0,0);
+    drawPolygon(x_0-d,y_0,z_0-w, x_0-d,y_0+h-step,z_0-w, x_0-d,y_0+h-step,z_0-w+step, x_0-d,y_0,z_0-w+step, -1,0,0);
+}
+
+
 void DrawOpenGL::paintWalls()
 {
     //wall
@@ -155,13 +220,7 @@ void DrawOpenGL::paintWalls()
     glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
     GLfloat front_color[] = {0.88,0.87,0.88,1};
     glMaterialfv(GL_FRONT, GL_DIFFUSE, front_color);
-    glBegin(GL_POLYGON);
-    glNormal3f(0,0,1);
-    glVertex3d(-1.0,0.0,-1.0);
-    glVertex3d(-1.0,1.0,-1.0);
-    glVertex3d(0.5,1.0,-1.0);
-    glVertex3d(0.5,0.0,-1.0);
-    glEnd();
+    drawPolygon(-1.0,0.0,-1.0, -1.0,1.0,-1.0, 0.5,1.0,-1.0, 0.5,0.0,-1.0, 0,0,1);
 
     //plinth
     glColor4d(0.80,0.79,0.80,1.0);
@@ -170,21 +229,8 @@ void DrawOpenGL::paintWalls()
     front_color[1] =0.79;
     front_color[2] =0.90;
     glMaterialfv(GL_FRONT, GL_DIFFUSE, front_color);
-    glBegin(GL_POLYGON);
-    glNormal3f(0,0,1);
-    glVertex3d(-1.0,0.0,-0.99);
-    glVertex3d(-1.0,0.1,-0.99);
-    glVertex3d(0.5,0.1,-0.99);
-    glVertex3d(0.5,0.0,-0.99);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glNormal3f(0,1,0);
-    glVertex3d(-1.0,0.1,-0.99);
-    glVertex3d(-1.0,0.1,-1.0);
-    glVertex3d(0.5,0.1,-1.0);
-    glVertex3d(0.5,0.1,-0.99);
-    glEnd();
+    drawPolygon(-1.0,0.0,-0.99, -1.0,0.1,-0.99, 0.5,0.1,-0.99, 0.5,0.0,-0.99, 0,0,1);
+    drawPolygon(-1.0,0.1,-0.99, -1.0,0.1,-1.0, 0.5,0.1,-1.0, 0.5,0.1,-0.99, 0,1,0);
 
     //wall
     glColor4d(0.88,0.87,0.88,1.0);
@@ -193,13 +239,7 @@ void DrawOpenGL::paintWalls()
     front_color[1] =0.87;
     front_color[2] =0.88;
     glMaterialfv(GL_FRONT, GL_DIFFUSE, front_color);
-    glBegin(GL_POLYGON);
-    glNormal3f(1,0,0);
-    glVertex3d(-1.0,0.0,0.5);
-    glVertex3d(-1.0,1.0,0.5);
-    glVertex3d(-1.0,1.0,-1.0);
-    glVertex3d(-1.0,0.0,-1.0);
-    glEnd();
+    drawPolygon(-1.0,0.0,0.5, -1.0,1.0,0.5, -1.0,1.0,-1.0, -1.0,0.0,-1.0, 1,0,0);
 
     //windows
     glColor4d(0.0,0.0,0.0,1.0);
@@ -208,29 +248,9 @@ void DrawOpenGL::paintWalls()
     front_color[1] =0.1;
     front_color[2] =0.2;
     glMaterialfv(GL_FRONT, GL_DIFFUSE, front_color);
-    glBegin(GL_POLYGON);
-    glNormal3f(1,0,0);
-    glVertex3d(-1.0,0.2,0.45);
-    glVertex3d(-1.0,0.8,0.45);
-    glVertex3d(-1.0,0.8,0.05);
-    glVertex3d(-1.0,0.2,0.05);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glNormal3f(1,0,0);
-    glVertex3d(-1.0,0.2,-0.0);
-    glVertex3d(-1.0,0.8,-0.0);
-    glVertex3d(-1.0,0.8,-0.45);
-    glVertex3d(-1.0,0.2,-0.45);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glNormal3f(1,0,0);
-    glVertex3d(-1.0,0.2,-0.5);
-    glVertex3d(-1.0,0.8,-0.5);
-    glVertex3d(-1.0,0.8,-0.95);
-    glVertex3d(-1.0,0.2,-0.95);
-    glEnd();
+    drawPolygon(-1.0,0.2,0.45, -1.0,0.8,0.45, -1.0,0.8,0.05, -1.0,0.2,0.05, 1,0,0);
+    drawPolygon(-1.0,0.2,-0.0, -1.0,0.8,-0.0, -1.0,0.8,-0.45, -1.0,0.2,-0.45, 1,0,0);
+    drawPolygon(-1.0,0.2,-0.5, -1.0,0.8,-0.5, -1.0,0.8,-0.95, -1.0,0.2,-0.95, 1,0,0);
 
     //over windows
     glColor4d(0.88,0.87,0.88,1.0);
@@ -239,21 +259,9 @@ void DrawOpenGL::paintWalls()
     front_color[1] =0.87;
     front_color[2] =0.88;
     glMaterialfv(GL_FRONT, GL_DIFFUSE, front_color);
-    glBegin(GL_POLYGON);
-    glNormal3f(0,-1,0);
-    glVertex3d(-1.0,0.8,0.5);
-    glVertex3d(-0.8,0.8,0.5);
-    glVertex3d(-0.8,0.8,-1.0);
-    glVertex3d(-1.0,0.8,-1.0);
-    glEnd();
+    drawPolygon(-1.0,0.8,0.5, -0.8,0.8,0.5, -0.8,0.8,-1.0, -1.0,0.8,-1.0, 0,-1,0);
+    drawPolygon(-0.8,0.8,0.5, -0.8,1.0,0.5, -0.8,1.0,-1.0, -0.8,0.8,-1.0, 1,0,0);
 
-    glBegin(GL_POLYGON);
-    glNormal3f(1,0,0);
-    glVertex3d(-0.8,0.8,0.5);
-    glVertex3d(-0.8,1.0,0.5);
-    glVertex3d(-0.8,1.0,-1.0);
-    glVertex3d(-0.8,0.8,-1.0);
-    glEnd();
 
     //plinth
     glColor4d(0.80,0.79,0.80,1.0);
@@ -262,29 +270,8 @@ void DrawOpenGL::paintWalls()
     front_color[1] =0.79;
     front_color[2] =0.90;
     glMaterialfv(GL_FRONT, GL_DIFFUSE, front_color);
-    glBegin(GL_POLYGON);
-    glNormal3f(1,0,0);
-    glVertex3d(-0.99,0.0,0.5);
-    glVertex3d(-0.99,0.1,0.5);
-    glVertex3d(-0.99,0.1,-1.0);
-    glVertex3d(-0.99,0.0,-1.0);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glNormal3f(0,1,0);
-    glVertex3d(-0.99,0.1,0.5);
-    glVertex3d(-1.0,0.1,0.5);
-    glVertex3d(-1.0,0.1,-1.0);
-    glVertex3d(-0.99,0.1,-1.0);
-    glEnd();
-
-    /*glBegin(GL_POLYGON);
-    glNormal3f(0,1,0);
-    glVertex3d(-0.8,1.0,0.5);
-    glVertex3d(-1.0,1.0,0.5);
-    glVertex3d(-1.0,1.0,-1.0);
-    glVertex3d(-0.8,1.0,-1.0);
-    glEnd();*/
+    drawPolygon(-0.99,0.0,0.5, -0.99,0.1,0.5, -0.99,0.1,-1.0, -0.99,0.0,-1.0, 1,0,0);
+    drawPolygon(-0.99,0.1,0.5, -1.0,0.1,0.5, -1.0,0.1,-1.0, -0.99,0.1,-1.0, 0,1,0);
 
     //wall
     glColor4d(0.88,0.87,0.88,1.0);
@@ -293,13 +280,7 @@ void DrawOpenGL::paintWalls()
     front_color[1] =0.87;
     front_color[2] =0.88;
     glMaterialfv(GL_FRONT, GL_DIFFUSE, front_color);
-    glBegin(GL_POLYGON);
-    glNormal3f(0,0,1);
-    glVertex3d(0.5,0.0,-1.0);
-    glVertex3d(0.5,1.0,-1.0);
-    glVertex3d(0.5,1.0,0.5);
-    glVertex3d(0.5,0.0,0.5);
-    glEnd();
+    drawPolygon(0.5,0.0,-1.0, 0.5,1.0,-1.0, 0.5,1.0,0.5, 0.5,0.0,0.5, 0,0,1);
 
     //plinth
     glColor4d(0.80,0.79,0.80,1.0);
@@ -308,21 +289,8 @@ void DrawOpenGL::paintWalls()
     front_color[1] =0.79;
     front_color[2] =0.90;
     glMaterialfv(GL_FRONT, GL_DIFFUSE, front_color);
-    glBegin(GL_POLYGON);
-    glNormal3f(0,0,1);
-    glVertex3d(0.49,0.0,-1.0);
-    glVertex3d(0.49,0.1,-1.0);
-    glVertex3d(0.49,0.1,0.5);
-    glVertex3d(0.49,0.0,0.5);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glNormal3f(0,1,0);
-    glVertex3d(0.49,0.1,-1.0);
-    glVertex3d(0.5,0.1,-1.0);
-    glVertex3d(0.5,0.1,0.5);
-    glVertex3d(0.49,0.1,0.5);
-    glEnd();
+    drawPolygon(0.49,0.0,-1.0, 0.49,0.1,-1.0, 0.49,0.1,0.5, 0.49,0.0,0.5, 0,0,1);
+    drawPolygon(0.49,0.1,-1.0, 0.5,0.1,-1.0, 0.5,0.1,0.5, 0.49,0.1,0.5, 0,1,0);
 
     //wall
     glColor4d(0.88,0.87,0.88,1.0);
@@ -331,13 +299,7 @@ void DrawOpenGL::paintWalls()
     front_color[1] =0.87;
     front_color[2] =0.88;
     glMaterialfv(GL_FRONT, GL_DIFFUSE, front_color);
-    glBegin(GL_POLYGON);
-    glNormal3f(1,0,0);
-    glVertex3d(0.5,0.0,0.5);
-    glVertex3d(0.5,1.0,0.5);
-    glVertex3d(-1.0,1.0,0.5);
-    glVertex3d(-1.0,0.0,0.5);
-    glEnd();
+    drawPolygon(0.5,0.0,0.5, 0.5,1.0,0.5, -1.0,1.0,0.5, -1.0,0.0,0.5, 1,0,0);
 
     //plinth
     glColor4d(0.80,0.79,0.80,1.0);
@@ -346,21 +308,8 @@ void DrawOpenGL::paintWalls()
     front_color[1] =0.79;
     front_color[2] =0.90;
     glMaterialfv(GL_FRONT, GL_DIFFUSE, front_color);
-    glBegin(GL_POLYGON);
-    glNormal3f(1,0,0);
-    glVertex3d(0.5,0.0,0.49);
-    glVertex3d(0.5,0.1,0.49);
-    glVertex3d(-1.0,0.1,0.49);
-    glVertex3d(-1.0,0.0,0.49);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glNormal3f(0,1,0);
-    glVertex3d(0.5,0.1,0.49);
-    glVertex3d(0.5,0.1,0.5);
-    glVertex3d(-1.0,0.1,0.5);
-    glVertex3d(-1.0,0.1,0.49);
-    glEnd();
+    drawPolygon(0.5,0.0,0.49, 0.5,0.1,0.49, -1.0,0.1,0.49, -1.0,0.0,0.49, 1,0,0);
+    drawPolygon(0.5,0.1,0.49, 0.5,0.1,0.5, -1.0,0.1,0.5, -1.0,0.1,0.49, 0,1,0);
 
     //floor
     glColor4d(0.80,0.79,0.80,1.0);
@@ -370,13 +319,7 @@ void DrawOpenGL::paintWalls()
     front_color[2] =0.90;
     glMaterialfv(GL_FRONT, GL_DIFFUSE, front_color);
     glDisable(GL_CULL_FACE);
-    glBegin(GL_POLYGON);
-    glNormal3f(0,1,0);
-    glVertex3d(0.5,0.0,0.5);
-    glVertex3d(-1.0,0.0,0.5);
-    glVertex3d(-1.0,0.0,-1.0);
-    glVertex3d(0.5,0.0,-1.0);
-    glEnd();
+    drawPolygon(0.5,0.0,0.5, -1.0,0.0,0.5, -1.0,0.0,-1.0, 0.5,0.0,-1.0, 0,1,0);
     glEnable(GL_CULL_FACE);
 }
 
@@ -455,6 +398,11 @@ void DrawOpenGL::setLightCheck(bool flag, int i)
 void DrawOpenGL::setBallCheck(bool flag)
 {
     ball_check = flag;
+}
+
+void DrawOpenGL::setShelfCheck(bool flag)
+{
+    shelf_check = flag;
 }
 
 void DrawOpenGL::setLightPos(float x, float y, float z, int i)

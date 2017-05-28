@@ -51,6 +51,8 @@ private slots:
 
     void on_z_light1_move_valueChanged(int value);
 
+    void on_shelf_check_toggled(bool checked);
+
 private:
     Ui::MainWindow *ui;
 

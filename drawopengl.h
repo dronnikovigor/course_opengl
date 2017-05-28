@@ -15,7 +15,7 @@ private:
 
     enum myView {PERSPECTIVE,ORTHO};
     myView currentView;
-    const static int lightNum = 2;
+    const static int lightNum = 3;
     bool light_check[lightNum];
     float light_pos[lightNum][3];
     QMatrix4x4 ShadowMatrix;
@@ -28,6 +28,7 @@ private:
     float y_look;
     float z_look;
     bool ball_check;
+    bool shelf_check;
 
 public:
     DrawOpenGL(QWidget *parent = 0);
@@ -37,6 +38,8 @@ public:
     void offLight();
     void setShadow();
     void paintXYZ();
+    void drawPolygon(float xA, float yA, float zA, float xB, float yB, float zB, float xC, float yC, float zC, float xD, float yD, float zD, int xN, int yN, int zN);
+    void paintShelf(float x_0, float y_0, float z_0, float h, float w, float d);
     void paintWalls();
     void paintBall(float x_0, float y_0, float z_0, float R);
 
@@ -45,6 +48,7 @@ public:
     void setLook(float x, float y, float z);
     void setLightCheck(bool flag, int i);
     void setBallCheck(bool flag);
+    void setShelfCheck(bool flag);
     void setLightPos(float x, float y, float z, int i);
 protected:
     void initializeGL();

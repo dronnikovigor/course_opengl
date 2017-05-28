@@ -17,6 +17,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->light_0_check->setChecked(true);
     ui->light_1_check->setChecked(true);
     ui->ball_check->setChecked(true);
+    ui->shelf_check->setChecked(true);
 
     ui->x_slider_look->setValue(105);
     ui->y_slider_look->setValue(105);
@@ -144,4 +145,10 @@ void MainWindow::on_y_light1_move_valueChanged(int value)
 void MainWindow::on_z_light1_move_valueChanged(int value)
 {
     on_x_light1_move_valueChanged(0);
+}
+
+void MainWindow::on_shelf_check_toggled(bool checked)
+{
+    ui->OpenGLWidget->setShelfCheck(checked);
+    ui->OpenGLWidget->update();
 }
