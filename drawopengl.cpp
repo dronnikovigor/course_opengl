@@ -215,19 +215,28 @@ void DrawOpenGL::paintShelf(float x_0, float y_0, float z_0, float h, float w, f
 
 void DrawOpenGL::paintTrgl(float x_0, float y_0, float z_0, float w, float k)
 {
+    float step = 0.05;
     glColor4d(0.72,0.81,0.80,1.0);
     glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
     GLfloat front_color[] = {0.72,0.81,0.80,1};
     glMaterialfv(GL_FRONT, GL_DIFFUSE, front_color);
 
     //inside
-    drawPolygon(x_0,y_0,z_0, x_0,y_0+k*sqrt(3)*0.5,z_0-k*0.5, x_0-w,y_0+k*sqrt(3)*0.5,z_0-k*0.5, x_0-w,y_0,z_0, 0,0,-1);
-    drawPolygon(x_0,y_0,z_0-k, x_0-w,y_0,z_0-k, x_0-w,y_0+k*sqrt(3)*0.5,z_0-k*0.5, x_0,y_0+k*sqrt(3)*0.5,z_0-k*0.5, 0,0,1);
-    drawPolygon(x_0,y_0,z_0, x_0-w,y_0,z_0, x_0-w,y_0,z_0-k, x_0,y_0,z_0-k, 0,1,0);
+    drawPolygon(x_0,y_0+step,z_0-step, x_0,y_0+k*sqrt(3)*0.5-step,z_0-k*0.5, x_0-w,y_0+k*sqrt(3)*0.5-step,z_0-k*0.5, x_0-w,y_0+step,z_0-step, 0,0,-1);
+    drawPolygon(x_0,y_0+step,z_0-k+step, x_0-w,y_0+step,z_0-k+step, x_0-w,y_0+k*sqrt(3)*0.5-step,z_0-k*0.5, x_0,y_0+k*sqrt(3)*0.5-step,z_0-k*0.5, 0,0,1);
+    drawPolygon(x_0,y_0+step,z_0-step, x_0-w,y_0+step,z_0-step, x_0-w,y_0+step,z_0-k+step, x_0,y_0+step,z_0-k+step, 0,1,0);
     //outside
     drawPolygon(x_0-w,y_0,z_0, x_0-w,y_0+k*sqrt(3)*0.5,z_0-k*0.5, x_0,y_0+k*sqrt(3)*0.5,z_0-k*0.5, x_0,y_0,z_0, 0,0,1);
     drawPolygon(x_0,y_0+k*sqrt(3)*0.5,z_0-k*0.5, x_0-w,y_0+k*sqrt(3)*0.5,z_0-k*0.5, x_0-w,y_0,z_0-k, x_0,y_0,z_0-k, 0,0,-1);
     drawPolygon(x_0,y_0,z_0-k, x_0-w,y_0,z_0-k, x_0-w,y_0,z_0, x_0,y_0,z_0, 0,-1,0);
+
+    drawPolygon(x_0,y_0,z_0, x_0,y_0+k*sqrt(3)*0.5,z_0-k*0.5, x_0,y_0+k*sqrt(3)*0.5-step,z_0-k*0.5, x_0,y_0+step,z_0-step, 1,0,0);
+    drawPolygon(x_0,y_0,z_0, x_0,y_0+step,z_0-step, x_0,y_0+step,z_0-k+step, x_0,y_0,z_0-k, 1,0,0);
+    drawPolygon(x_0,y_0+step,z_0-k+step, x_0,y_0+k*sqrt(3)*0.5-step,z_0-k*0.5, x_0,y_0+k*sqrt(3)*0.5,z_0-k*0.5, x_0,y_0,z_0-k, 1,0,0);
+
+    drawPolygon(x_0-w,y_0+step,z_0-step, x_0-w,y_0+k*sqrt(3)*0.5-step,z_0-k*0.5, x_0-w,y_0+k*sqrt(3)*0.5,z_0-k*0.5, x_0-w,y_0,z_0, -1,0,0);
+    drawPolygon(x_0-w,y_0,z_0-k, x_0-w,y_0+step,z_0-k+step, x_0-w,y_0+step,z_0-step, x_0-w,y_0,z_0, -1,0,0);
+    drawPolygon(x_0-w,y_0,z_0-k, x_0-w,y_0+k*sqrt(3)*0.5,z_0-k*0.5, x_0-w,y_0+k*sqrt(3)*0.5-step,z_0-k*0.5, x_0-w,y_0+step,z_0-k+step, -1,0,0);
 }
 
 void DrawOpenGL::paintWalls()
