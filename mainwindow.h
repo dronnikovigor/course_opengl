@@ -53,6 +53,8 @@ private slots:
 
     void on_shelf_check_toggled(bool checked);
 
+    void on_round_shelf_check_toggled(bool checked);
+
 private:
     Ui::MainWindow *ui;
 

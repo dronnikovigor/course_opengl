@@ -62,8 +62,7 @@ void DrawOpenGL::paintGL()
     paintWalls();
     //if (xyz_check)
     //    paintXYZ();
-    if (ball_check)
-        paintBall(-0.2, 0.1, -0.5, 0.15);
+
     if (shelf_check)
     {
         light_pos[2][0] = 0.3;
@@ -77,6 +76,18 @@ void DrawOpenGL::paintGL()
     else
         light_check[2] = false;
     paintTrgl(-0.5, 0.2, 0.3, 0.2, 0.2);
+    if (roundShelf_check)
+    {
+        light_pos[3][0] = 0.1;
+        light_pos[3][1] = 0.2;
+        light_pos[3][2] = -0.5;
+        light_check[3] = true;
+        paintRoundShelf(0.0, 0.0, -0.5, 0.3, 0.2);
+    }
+    else
+        light_check[3] = false;
+    if (ball_check)
+        paintBall(0.0, 0.45, -0.5, 0.08);
     //setShadow();
 
     offLight();
@@ -110,7 +121,7 @@ void DrawOpenGL::setLight()
         glEnable(GL_LIGHT0);
         glLightfv(GL_LIGHT0, GL_DIFFUSE, light0_diffuse);
         glLightfv(GL_LIGHT0, GL_POSITION, light0_position);
-        glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 0.0);
+        glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 0.9);
         glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 0.2);
         glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.4);
     }
@@ -134,9 +145,21 @@ void DrawOpenGL::setLight()
         glEnable(GL_LIGHT2);
         glLightfv(GL_LIGHT2, GL_DIFFUSE, light2_diffuse);
         glLightfv(GL_LIGHT2, GL_POSITION, light2_position);
-        glLightf(GL_LIGHT2, GL_CONSTANT_ATTENUATION, 0.0);
+        glLightf(GL_LIGHT2, GL_CONSTANT_ATTENUATION, 0.4);
         glLightf(GL_LIGHT2, GL_LINEAR_ATTENUATION, 0.6);
         glLightf(GL_LIGHT2, GL_QUADRATIC_ATTENUATION, 0.6);
+    }
+    //3
+    if (light_check[3] == true)
+    {
+        GLfloat light3_diffuse[] = {0.95, 0.98, 0.84};
+        GLfloat light3_position[] = {light_pos[3][0], light_pos[3][1], light_pos[3][2], 1.0};
+        glEnable(GL_LIGHT3);
+        glLightfv(GL_LIGHT3, GL_DIFFUSE, light3_diffuse);
+        glLightfv(GL_LIGHT3, GL_POSITION, light3_position);
+        glLightf(GL_LIGHT3, GL_CONSTANT_ATTENUATION, 0.5);
+        glLightf(GL_LIGHT3, GL_LINEAR_ATTENUATION, 0.5);
+        glLightf(GL_LIGHT3, GL_QUADRATIC_ATTENUATION, 0.6);
     }
 
 
@@ -144,18 +167,11 @@ void DrawOpenGL::setLight()
 
 void DrawOpenGL::offLight()
 {
-    if (light_check[0] == true)
-    {
-        glDisable(GL_LIGHTING);
-        glDisable(GL_LIGHT0);
-    }
-    if (light_check[1] == true)
-    {
-        glDisable(GL_LIGHTING);
-        glDisable(GL_LIGHT1);
-    }
     glDisable(GL_LIGHTING);
+    glDisable(GL_LIGHT0);
+    glDisable(GL_LIGHT1);
     glDisable(GL_LIGHT2);
+    glDisable(GL_LIGHT3);
 }
 
 void DrawOpenGL::setShadow()
@@ -185,6 +201,63 @@ void DrawOpenGL::drawPolygon(float xA, float yA, float zA, float xB, float yB, f
     glVertex3d(xC, yC, zC);
     glVertex3d(xD, yD, zD);
     glEnd();
+}
+
+void DrawOpenGL::drawTrgl(float xA, float yA, float zA, float xB, float yB, float zB, float xC, float yC, float zC, int xN, int yN, int zN)
+{
+    glBegin(GL_TRIANGLE_FAN);
+    glNormal3f(xN, yN, zN);
+    glVertex3d(xA, yA, zA);
+    glVertex3d(xB, yB, zB);
+    glVertex3d(xC, yC, zC);
+    glEnd();
+}
+
+void DrawOpenGL::paintRoundShelf(float x_0, float y_0, float z_0, float h, float r)
+{
+    glColor4d(0.91,0.87,0.81,1.0);
+    glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
+    GLfloat front_color[] = {0.91,0.87,0.81,1};
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, front_color);
+    float angle = 2*PI/180;
+    float step = 0.05;
+    for (float a = 0; a <= 180; a+=angle){
+        drawTrgl(x_0+r*0.3*cos(a+angle),y_0,z_0+r*0.3*sin(a+angle), x_0+r*0.3*cos(a),y_0,z_0+r*0.3*sin(a), x_0,y_0,z_0, 0,-1,0);
+        drawTrgl(x_0,y_0+h*0.3,z_0, x_0+r*0.3*cos(a),y_0+h*0.3,z_0+r*0.3*sin(a), x_0+r*0.3*cos(a+angle),y_0+h*0.3,z_0+r*0.3*sin(a+angle), 0,1,0);
+        drawPolygon(x_0+r*0.3*cos(a+angle),y_0+h*0.3,z_0+r*0.3*sin(a+angle),
+                    x_0+r*0.3*cos(a),y_0+h*0.3,z_0+r*0.3*sin(a),
+                    x_0+r*0.3*cos(a),y_0,z_0+r*0.3*sin(a),
+                    x_0+r*0.3*cos(a+angle),y_0,z_0+r*0.3*sin(a+angle), 1,0,0);
+
+        drawTrgl(x_0+r*cos(a+angle),y_0+h*0.3,z_0+r*sin(a+angle), x_0+r*cos(a),y_0+h*0.3,z_0+r*sin(a), x_0,y_0+h*0.3,z_0, 0,-1,0);
+        drawTrgl(x_0,y_0+h*0.3+step,z_0, x_0+r*cos(a),y_0+h*0.3+step,z_0+r*sin(a), x_0+r*cos(a+angle),y_0+h*0.3+step,z_0+r*sin(a+angle), 0,1,0);
+        drawPolygon(x_0+r*cos(a+angle),y_0+h*0.3+step,z_0+r*sin(a+angle),
+                    x_0+r*cos(a),y_0+h*0.3+step,z_0+r*sin(a),
+                    x_0+r*cos(a),y_0+h*0.3,z_0+r*sin(a),
+                    x_0+r*cos(a+angle),y_0+h*0.3,z_0+r*sin(a+angle), 1,0,0);
+    }
+    angle = 2*PI/6;
+    for (float b = 0; b <= 6; b+=angle){
+        drawPolygon(x_0,y_0+h*1.3-step,z_0,
+                    x_0+r*cos(b),y_0+h*1.3-step,z_0+r*sin(b),
+                    x_0+r*cos(b),y_0+h*0.3+step,z_0+r*sin(b),
+                    x_0,y_0+h*0.3+step,z_0, 1,0,0);
+
+        drawPolygon(x_0,y_0+h*0.3+step,z_0,
+                    x_0+r*cos(b),y_0+h*0.3+step,z_0+r*sin(b),
+                    x_0+r*cos(b),y_0+h*1.3-step,z_0+r*sin(b),
+                    x_0,y_0+h*1.3-step,z_0, 1,0,0);
+    }
+    angle = 2*PI/180;
+    for (float a = 0; a <= 180; a+=angle){
+        drawTrgl(x_0+r*cos(a+angle),y_0+h*1.3-step,z_0+r*sin(a+angle), x_0+r*cos(a),y_0+h*1.3-step,z_0+r*sin(a), x_0,y_0+h*1.3-step,z_0, 0,-1,0);
+        drawTrgl(x_0,y_0+h*1.3,z_0, x_0+r*cos(a),y_0+h*1.3,z_0+r*sin(a), x_0+r*cos(a+angle),y_0+h*1.3,z_0+r*sin(a+angle), 0,1,0);
+        drawPolygon(x_0+r*cos(a+angle),y_0+h*1.3,z_0+r*sin(a+angle),
+                    x_0+r*cos(a),y_0+h*1.3,z_0+r*sin(a),
+                    x_0+r*cos(a),y_0+h*1.3-step,z_0+r*sin(a),
+                    x_0+r*cos(a+angle),y_0+h*1.3-step,z_0+r*sin(a+angle), 1,0,0);
+
+    }
 }
 
 void DrawOpenGL::paintShelf(float x_0, float y_0, float z_0, float h, float w, float d)
@@ -429,6 +502,12 @@ void DrawOpenGL::setBallCheck(bool flag)
 void DrawOpenGL::setShelfCheck(bool flag)
 {
     shelf_check = flag;
+}
+
+
+void DrawOpenGL::setRoundShelfCheck(bool flag)
+{
+    roundShelf_check = flag;
 }
 
 void DrawOpenGL::setLightPos(float x, float y, float z, int i)

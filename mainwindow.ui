@@ -45,7 +45,7 @@
       <x>1110</x>
       <y>10</y>
       <width>241</width>
-      <height>441</height>
+      <height>466</height>
      </rect>
     </property>
     <layout class="QFormLayout" name="formLayout">
@@ -233,20 +233,6 @@
        </property>
       </widget>
      </item>
-     <item row="15" column="0" colspan="2">
-      <widget class="QCheckBox" name="light_1_check">
-       <property name="text">
-        <string>Light 2</string>
-       </property>
-      </widget>
-     </item>
-     <item row="19" column="0" colspan="2">
-      <widget class="QCheckBox" name="ball_check">
-       <property name="text">
-        <string>Ball</string>
-       </property>
-      </widget>
-     </item>
      <item row="12" column="1">
       <widget class="QSlider" name="x_light0_move">
        <property name="minimum">
@@ -283,6 +269,13 @@
        </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="15" column="0" colspan="2">
+      <widget class="QCheckBox" name="light_1_check">
+       <property name="text">
+        <string>Light 2</string>
        </property>
       </widget>
      </item>
@@ -325,10 +318,24 @@
        </property>
       </widget>
      </item>
+     <item row="19" column="0" colspan="2">
+      <widget class="QCheckBox" name="ball_check">
+       <property name="text">
+        <string>Ball</string>
+       </property>
+      </widget>
+     </item>
      <item row="20" column="0" colspan="2">
       <widget class="QCheckBox" name="shelf_check">
        <property name="text">
         <string>Shelf</string>
+       </property>
+      </widget>
+     </item>
+     <item row="21" column="0" colspan="2">
+      <widget class="QCheckBox" name="round_shelf_check">
+       <property name="text">
+        <string>Round Shelf</string>
        </property>
       </widget>
      </item>

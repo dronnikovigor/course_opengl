@@ -18,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->light_1_check->setChecked(true);
     ui->ball_check->setChecked(true);
     ui->shelf_check->setChecked(true);
+    ui->round_shelf_check->setChecked(true);
 
     ui->x_slider_look->setValue(105);
     ui->y_slider_look->setValue(105);
@@ -28,8 +29,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->y_light0_move->setValue(100);
     ui->z_light0_move->setValue(-80);
     ui->x_light1_move->setValue(-90);
-    ui->y_light1_move->setValue(50);
-    ui->z_light1_move->setValue(0);
+    ui->y_light1_move->setValue(80);
+    ui->z_light1_move->setValue(30);
 
     on_comboBox_currentTextChanged("PERSPECTIVE");
     ui->comboBox->setCurrentIndex(1);
@@ -150,5 +151,11 @@ void MainWindow::on_z_light1_move_valueChanged(int value)
 void MainWindow::on_shelf_check_toggled(bool checked)
 {
     ui->OpenGLWidget->setShelfCheck(checked);
+    ui->OpenGLWidget->update();
+}
+
+void MainWindow::on_round_shelf_check_toggled(bool checked)
+{
+    ui->OpenGLWidget->setRoundShelfCheck(checked);
     ui->OpenGLWidget->update();
 }
