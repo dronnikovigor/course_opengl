@@ -37,6 +37,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     last_zoom_slider_look = 100;
     ui->zoom_slider_look->setValue(last_zoom_slider_look);
+    ui->zoom_ort_slider->setValue(100);
+    ui->zoom_ort_slider->setEnabled(false);
 }
 
 MainWindow::~MainWindow()
@@ -66,6 +68,10 @@ void MainWindow::on_comboBox_currentTextChanged(const QString &arg1)
 {
     ui->OpenGLWidget->setView(arg1);
     ui->OpenGLWidget->update();
+    if (arg1 =="ORHTO")
+        ui->zoom_ort_slider->setEnabled(true);
+    else
+        ui->zoom_ort_slider->setEnabled(false);
 }
 
 void MainWindow::on_x_slider_look_valueChanged(int value)
@@ -157,5 +163,11 @@ void MainWindow::on_shelf_check_toggled(bool checked)
 void MainWindow::on_round_shelf_check_toggled(bool checked)
 {
     ui->OpenGLWidget->setRoundShelfCheck(checked);
+    ui->OpenGLWidget->update();
+}
+
+void MainWindow::on_zoom_ort_slider_valueChanged(int value)
+{
+    ui->OpenGLWidget->setZoomOrt(value*0.01);
     ui->OpenGLWidget->update();
 }

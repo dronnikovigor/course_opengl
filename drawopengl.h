@@ -31,6 +31,8 @@ private:
     bool shelf_check;
     bool roundShelf_check;
 
+    float zoom;
+
 public:
     DrawOpenGL(QWidget *parent = 0);
     ~DrawOpenGL();
@@ -55,6 +57,7 @@ public:
     void setShelfCheck(bool flag);
     void setRoundShelfCheck(bool flag);
     void setLightPos(float x, float y, float z, int i);
+    void setZoomOrt(float z);
 protected:
     void initializeGL();
     void resizeGL(int nWidth, int nHeight);

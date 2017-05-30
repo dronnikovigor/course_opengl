@@ -82,12 +82,12 @@ void DrawOpenGL::paintGL()
         light_pos[3][1] = 0.2;
         light_pos[3][2] = -0.5;
         light_check[3] = true;
-        paintRoundShelf(0.0, 0.0, -0.5, 0.3, 0.2);
+        paintRoundShelf(-0.2, 0.0, -0.5, 0.3, 0.2);
     }
     else
         light_check[3] = false;
     if (ball_check)
-        paintBall(0.0, 0.45, -0.5, 0.08);
+        paintBall(-0.2, 0.45, -0.5, 0.08);
     //setShadow();
 
     offLight();
@@ -310,6 +310,21 @@ void DrawOpenGL::paintTrgl(float x_0, float y_0, float z_0, float w, float k)
     drawPolygon(x_0-w,y_0+step,z_0-step, x_0-w,y_0+k*sqrt(3)*0.5-step,z_0-k*0.5, x_0-w,y_0+k*sqrt(3)*0.5,z_0-k*0.5, x_0-w,y_0,z_0, -1,0,0);
     drawPolygon(x_0-w,y_0,z_0-k, x_0-w,y_0+step,z_0-k+step, x_0-w,y_0+step,z_0-step, x_0-w,y_0,z_0, -1,0,0);
     drawPolygon(x_0-w,y_0,z_0-k, x_0-w,y_0+k*sqrt(3)*0.5,z_0-k*0.5, x_0-w,y_0+k*sqrt(3)*0.5-step,z_0-k*0.5, x_0-w,y_0+step,z_0-k+step, -1,0,0);
+
+    glColor4d(0.95,0.90,1.00,1.0);
+    glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
+    front_color[0] =0.95;
+    front_color[1] =0.90;
+    front_color[2] =1.00;
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, front_color);
+    float angle = 2*PI/180;
+    float r = 0.005;
+    for (float a = 0; a <= 180; a+=angle){
+        drawPolygon(x_0-w*0.5+r*cos(a+angle),1.0,z_0-k*0.5+r*sin(a+angle),
+                    x_0-w*0.5+r*cos(a),1.0,z_0-k*0.5+r*sin(a),
+                    x_0-w*0.5+r*cos(a),y_0+k*sqrt(3)*0.5,z_0-k*0.5+r*sin(a),
+                    x_0-w*0.5+r*cos(a+angle),y_0+k*sqrt(3)*0.5,z_0-k*0.5+r*sin(a+angle), 1,0,0);
+    }
 }
 
 void DrawOpenGL::paintWalls()
@@ -420,6 +435,7 @@ void DrawOpenGL::paintWalls()
     glDisable(GL_CULL_FACE);
     drawPolygon(0.5,0.0,0.5, -1.0,0.0,0.5, -1.0,0.0,-1.0, 0.5,0.0,-1.0, 0,1,0);
     glEnable(GL_CULL_FACE);
+    drawPolygon(0.5,1.0,-1.0, -1.0,1.0,-1.0, -1.0,1.0,0.5, 0.5,1.0,0.5, 0,-1,0);
 }
 
 void DrawOpenGL::paintBall(float x_0, float y_0, float z_0, float R)
@@ -455,6 +471,20 @@ void DrawOpenGL::paintBall(float x_0, float y_0, float z_0, float R)
             glVertex3d(x, y, z);
             glEnd();
         }
+    glColor4d(0.95,0.90,1.00,1.0);
+    glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
+    front_color[0] =0.95;
+    front_color[1] =0.90;
+    front_color[2] =1.00;
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, front_color);
+    float angle = 2*PI/180;
+    float r = 0.005;
+    for (float a = 0; a <= 180; a+=angle){
+        drawPolygon(x_0+r*cos(a+angle),1.0,z_0+r*sin(a+angle),
+                    x_0+r*cos(a),1.0,z_0+r*sin(a),
+                    x_0+r*cos(a),y_0+R,z_0+r*sin(a),
+                    x_0+r*cos(a+angle),y_0+R,z_0+r*sin(a+angle), 1,0,0);
+    }
     glPopMatrix();
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
@@ -515,4 +545,9 @@ void DrawOpenGL::setLightPos(float x, float y, float z, int i)
     light_pos[i][0] = x;
     light_pos[i][1] = y;
     light_pos[i][2] = z;
+}
+
+void DrawOpenGL::setZoomOrt(float z)
+{
+    zoom = z;
 }

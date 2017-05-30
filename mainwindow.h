@@ -55,6 +55,8 @@ private slots:
 
     void on_round_shelf_check_toggled(bool checked);
 
+    void on_zoom_ort_slider_valueChanged(int value);
+
 private:
     Ui::MainWindow *ui;
 
